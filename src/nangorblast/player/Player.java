@@ -1,5 +1,11 @@
 package nangorblast.player;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import nangorblast.bomb.Bomb;
+import nangorblast.bomb.BombFactory;
+import nangorblast.bomb.BombPlacementException;
 import nangorblast.bomb.BombType;
 import nangorblast.common.Direction;
 import nangorblast.common.Entity;
@@ -41,6 +47,8 @@ public class Player extends Entity {
     private BombType selectedBombType;
     /** Sisa waktu sebelum player boleh pindah tile lagi, dalam detik. */
     private double moveCooldown;
+    /** Bomb milik player yang belum meledak. Thread-safe karena diakses beberapa thread. */
+    private final List<Bomb> ownBombs = new CopyOnWriteArrayList<>();
 
     public Player(Position spawnPosition) {
         super(spawnPosition);
@@ -61,6 +69,9 @@ public class Player extends Entity {
         this.remoteUnlocked = false;
         this.selectedBombType = BombType.NORMAL;
         this.moveCooldown = 0;
+        if (ownBombs != null) {
+            ownBombs.clear();
+        }
     }
 
     @Override
@@ -137,16 +148,45 @@ public class Player extends Entity {
         return isAlive() && activeBombs < bombCapacity;
     }
 
-    /** Dipanggil setelah bomb berhasil dipasang. */
-    public synchronized void onBombPlaced() {
+    /**
+     * Memasang bomb jenis yang sedang dipilih di tile tempat player berdiri.
+     * Engine wajib mengecek dulu bahwa tile tersebut belum ditempati bomb lain.
+     * @return bomb baru yang perlu dimasukkan engine ke daftar bomb di map
+     * @throws BombPlacementException jika player mati atau kapasitas bomb penuh
+     */
+    public synchronized Bomb placeBomb() throws BombPlacementException {
+        if (!isAlive()) {
+            throw new BombPlacementException("Player sudah tidak punya nyawa.");
+        }
+        if (activeBombs >= bombCapacity) {
+            throw new BombPlacementException("Kapasitas bomb penuh (" + bombCapacity + ").");
+        }
+        Bomb bomb = BombFactory.createBomb(selectedBombType, this, position);
+        ownBombs.add(bomb);
         activeBombs++;
+        return bomb;
     }
 
-    /** Dipanggil setelah bomb milik player selesai meledak; kapasitas kembali. */
-    public synchronized void onBombExploded() {
-        if (activeBombs > 0) {
+    /** Dipanggil oleh Bomb.explode(); kapasitas bomb dikembalikan ke player. */
+    public synchronized void onBombExploded(Bomb bomb) {
+        if (ownBombs.remove(bomb) && activeBombs > 0) {
             activeBombs--;
         }
+    }
+
+    /**
+     * Perintah DETONATE: memicu seluruh Remote Bomb aktif milik player (F02.3.3).
+     * @return false jika tidak ada Remote Bomb aktif (kondisi kegagalan)
+     */
+    public boolean detonateRemoteBombs() {
+        boolean found = false;
+        for (Bomb bomb : ownBombs) {
+            if (bomb.getType() == BombType.REMOTE && bomb.isActive()) {
+                bomb.trigger();
+                found = true;
+            }
+        }
+        return found;
     }
 
     /**
