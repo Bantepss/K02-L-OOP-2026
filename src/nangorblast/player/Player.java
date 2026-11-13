@@ -10,6 +10,7 @@ import nangorblast.bomb.BombType;
 import nangorblast.common.Direction;
 import nangorblast.common.Entity;
 import nangorblast.common.Position;
+import nangorblast.powerup.PowerUp;
 
 /**
  * Karakter yang dikendalikan pemain (F01).
@@ -203,6 +204,17 @@ public class Player extends Entity {
     }
 
     // ---------- Efek Power-Up (F06.2) ----------
+
+    /**
+     * Dipanggil engine saat player masuk ke tile berisi Power-Up (F06.3).
+     * Sengaja tidak synchronized supaya urutan kunci selalu PowerUp lalu Player,
+     * sehingga tidak terjadi deadlock.
+     * @return true jika Power-Up berhasil diambil; engine lalu menghapusnya dari map
+     */
+    public boolean collectPowerUp(PowerUp powerUp) {
+        return powerUp.applyTo(this);
+    }
+
 
     public synchronized void increaseBombCapacity() {
         bombCapacity = Math.min(bombCapacity + 1, MAX_BOMB_CAPACITY);
