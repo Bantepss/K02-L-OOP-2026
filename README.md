@@ -50,15 +50,15 @@ README.md
 |---|---|---|
 | F00 Inisialisasi dan restart | Farhan | Belum |
 | F00.3 Validasi map | Nasywa | Belum |
-| F01 Player | Caka | Belum |
-| F02 Bomb (Normal, Pumped, Remote) | Caka | Belum |
+| F01 Player | Caka | Kode dasar selesai; interaksi dengan Gate, Switch, dan Laser Trap menunggu map |
+| F02 Bomb (Normal, Pumped, Remote) | Caka | Kode dasar selesai; menunggu Explosion dan game loop |
 | F03 Explosion | Farhan | Belum |
 | F04 Block | Defina | Belum |
 | F05.2 Normal Enemy (Patrol, Chase) | Defina | Belum |
 | F05.3 Boss (Cerberus, Altair) | Farhan | Belum |
-| F06 Power-Up | Caka | Belum |
+| F06 Power-Up | Caka | Kode dasar selesai; penempatan Remote Detonator menunggu map |
 | F07 Map Black Fortress (Switch, Gate, Laser Trap) | Nasywa | Belum |
-| F08 Score | Caka | Belum |
+| F08 Score | Caka | Kode dasar selesai; menunggu integrasi dengan Enemy dan Boss |
 | F09.1 Menu utama dan input keyboard | Defina | Belum |
 | Tampilan CLI | Nasywa | Belum |
 | F09.2-F09.5 Game state, loop, game over, pause | Farhan | Belum |
