@@ -4,6 +4,12 @@ Permainan Bomberman berbasis CLI yang ditulis dengan Java untuk Tugas Besar IF20
 Pemain mengendalikan Deeper untuk mengalahkan semua Normal Enemy dan boss, lalu mencapai pintu keluar sebelum waktu habis.
 Kelompok ini mengerjakan Kelas K02, Kelompok L, dengan Map Type E: **Black Fortress**.
 
+## REQUIREMENTS BEFORE START EVERY SESSION
+- ALWAYS GIT PULL MAIN!!!
+- open pull request : kasih deskripsi yang benar
+- jangan pernah sekali kali git push main tanpa adanya konfirmasi ke team (akibatnya : merge conflict)
+- disarankan di branchnya melakukan branching lagi sesuai dengan git best practice
+
 ## Kebutuhan
 - JDK 21
 - GNU Make
